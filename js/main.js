@@ -61,7 +61,7 @@ const elemSliderScreen = document.querySelector('#SliderScreen');
 const elemScreenBtns = document.querySelectorAll('#SliderScreen .slider__btn');
 
 let index = 0;
-const showAmount = 3;
+const showAmount = 1;
 const groupLength = Math.ceil(data.length / showAmount);
 
 (() => {
