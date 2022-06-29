@@ -58,24 +58,25 @@ const elemScreenContent = document.querySelector('#SliderContent');
 const elemNavList = document.querySelector('#NavList');
 const elemNavBtns = elemNavList.children;
 const elemSliderScreen = document.querySelector('#SliderScreen');
+const elemSliderScreenWidth = elemSliderScreen.offsetWidth;
 const elemScreenBtns = document.querySelectorAll('#SliderScreen .slider__btn');
 
 let index = 0;
-const showAmount = 1;
+const showAmount = 3;
 const groupLength = Math.ceil(data.length / showAmount);
 
 (() => {
 	elemNavList.innerHTML = navStrMaker();
 	elemScreenContent.innerHTML = contentStrMaker();
-	// setSlider();
-	contentController();
+	setSlider();
+	contentHandler();
 	setListener();
 })();
-
 function setListener() {
 	elemNavList.addEventListener('click', clickEvent);
 	elemSliderScreen.addEventListener('click', stepMove);
 };
+
 
 function navStrMaker(navStr = '') {
 	for (let i = 0; i < groupLength; i++) {
@@ -91,21 +92,27 @@ function getAlt(img) {
 function contentStrMaker(imgStr = '') {
 	data.map(item => {
 		imgStr += `<a class="slider__link" href="${item.url}">
-				<img class="slider__img" src="${item.imgUrl}" alt="${getAlt(item.imgUrl)}"
-					width="200" height="150">
+				<div class="slider__linkContent">
+					<img class="slider__img" src="${item.imgUrl}" alt="${getAlt(item.imgUrl)}"
+						width="200" height="150">
+				</div>
 			</a>`;
 	});
 	return imgStr;
 };
 
-// function setSlider() {
-// 	const elemImgLink = document.querySelector('#SliderContent .slider__link');
-// 	const elemImgLinkComStyle = window.getComputedStyle(elemImgLink, null);
-// 	const elemImgLinkMarginL = parseInt(elemImgLinkComStyle.marginLeft, 10);
-// 	const elemImgLinkMarginR = parseInt(elemImgLinkComStyle.marginRight, 10);
-// 	const elemImgLinkWidth = parseInt(elemImgLinkComStyle.width, 10);
-// 	elemSliderScreen.style.width = (elemImgLinkMarginL + elemImgLinkMarginR + elemImgLinkWidth) * showAmount + 'px';
-// };
+function setSlider() {
+	const elemImgLink = document.querySelector('#SliderContent .slider__link');
+	const elemImgLinkComStyle = window.getComputedStyle(elemImgLink, null);
+	const elemImgLinkMarginL = parseInt(elemImgLinkComStyle.marginLeft, 10);
+	const elemImgLinkMarginR = parseInt(elemImgLinkComStyle.marginRight, 10);
+	const contentItemWidth = (elemSliderScreenWidth / showAmount) - (elemImgLinkMarginL + elemImgLinkMarginR);
+	const elemImgContent = document.querySelectorAll('#SliderContent .slider__linkContent');
+	elemImgContent.forEach(link => {
+		link.style.width = contentItemWidth + 'px';
+	});
+};
+
 
 function clickEvent(e) {
 	const self = e.target;
@@ -113,8 +120,8 @@ function clickEvent(e) {
 	if (self.nodeName === 'BUTTON' && numericalIndex !== index) {
 		elemNavBtns[index].classList.remove('js-slider__navBtn');
 		index = numericalIndex;
-		elemNavBtns[index].classList.add('js-slider__navBtn');
-		contentController();
+		self.classList.add('js-slider__navBtn');
+		contentHandler();
 	};
 };
 
@@ -125,11 +132,11 @@ function stepMove(e) {
 		elemNavBtns[index].classList.remove('js-slider__navBtn');
 		index = index + numericalIndex;
 		elemNavBtns[index].classList.add('js-slider__navBtn');
-		contentController();
+		contentHandler();
 	};
 };
 
-function contentController() {
+function contentHandler() {
 	if (index === 0) {
 		elemScreenBtns[0].style.display = 'none';
 		elemScreenBtns[1].style.display = 'block';
